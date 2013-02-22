@@ -1,168 +1,139 @@
 package Data::Iterator::SlidingWindow;
-
 use strict;
 use warnings;
-use Carp;
+use parent 'Exporter';
+use Carp qw(croak);
+use overload
+    '<>'     => sub { shift->next() },
+    fallback => 1;
 
-use version; our $VERSION = qv('0.0.1');
+our $VERSION = '0.01';
 
-# Other recommended modules (uncomment to use):
-#  use IO::Prompt;
-#  use Perl6::Export;
-#  use Perl6::Slurp;
-#  use Perl6::Say;
+our @EXPORT = qw(iterator);
 
+sub _new {
+    my $class = shift;
+    my %args  = @_;
 
-# Module implementation here
+    my $window_size = $args{window_size};
+    my $src_stuff   = $args{data_source};
 
+    if ( !defined $window_size || $window_size !~ /^[0-9]+$/ || $window_size == 0 ) {
+        croak "window size must be positive integer.";
+    }
 
-1; # Magic true value required at end of module
+    my $src_type = ref( $src_stuff || q{} ) || q{};
+    if ( !( $src_type eq 'CODE' || $src_type eq 'ARRAY' ) ) {
+        croak "data_source must be CODE reference or ARRAY refernce.";
+    }
+
+    my $source;
+    if ( $src_type eq 'ARRAY' ) {
+        $source = sub {
+            shift @$src_stuff;
+        };
+    }
+    else {
+        $source = $src_stuff;
+    }
+
+    # Initialize current window
+    my @current_window;
+    while ( @current_window < $window_size ) {
+        my $next = $source->();
+        last if !defined $next;
+        push @current_window, $next;
+    }
+
+    my $self = {
+        _window_size    => $window_size,
+        _source         => $source,
+        _current_window => \@current_window,
+    };
+
+    return bless $self, $class;
+}
+
+sub next {
+    my $self = shift;
+    my $ret  = [ @{ $self->{_current_window} } ];
+    return if @$ret != $self->{_window_size};
+    shift @{ $self->{_current_window} };
+    my $next = $self->{_source}->();
+    if ( defined $next ) {
+        push @{ $self->{_current_window} }, $next;
+    }
+    return $ret;
+}
+
+sub iterator {
+    my ( $window_size, $data_source ) = @_;
+    return __PACKAGE__->_new(
+        window_size => $window_size,
+        data_source => $data_source,
+    );
+}
+
+1;
 __END__
-
+ 
 =head1 NAME
-
-Data::Iterator::SlidingWindow - [One line description of module's purpose here]
-
-
-=head1 VERSION
-
-This document describes Data::Iterator::SlidingWindow version 0.0.1
-
-
+ 
+Data::Iterator::SlidingWindow - Iteration data with Sliding Window Algorithm
+ 
 =head1 SYNOPSIS
-
-    use Data::Iterator::SlidingWindow;
-
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-  
-  
+ 
+  use Data::Iterator::SlidingWindow;
+ 
+  my $ i = 0;
+  my $iter = iterator 3 => sub{
+      #generate/fetch next one.
+      return if $i > 6;
+      return $i++;
+  };
+ 
+  while(defined(my $cur = $iter->next())){
+      # $cur is [1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6]
+  }
+ 
+And you can use <> oeprator.
+ 
+    while(<$iter>){
+        my $cur = $_;
+        ....
+    }
+ 
+ 
 =head1 DESCRIPTION
+ 
+Data::Iterator::SlidingWindow is
+ 
+=head1 METHODS
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+=head2 iterator($window_size, $data_source) 
+
+The arguments of iterator() are: 
+
+=over 2
+
+=item $window_size 
 
 
-=head1 INTERFACE 
-
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
-
-
-=head1 DIAGNOSTICS
-
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
-
-=over
-
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Description of error here]
-
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
+=item $data_source
 
 =back
 
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-  
-Data::Iterator::SlidingWindow requires no configuration files or environment variables.
-
-
-=head1 DEPENDENCIES
-
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
-
-None.
-
-
-=head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
-
-
-=head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
-
-No bugs have been reported.
-
-Please report any bugs or feature requests to
-C<bug-data-iterator-slidingwindow@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org>.
-
-
+=head2 next()
+ 
 =head1 AUTHOR
-
-  C<< <hide.o.j55 {at} gmail.com> >>
-
-
-=head1 LICENCE AND COPYRIGHT
-
-Copyright (c) 2013, Hideaki Ohno C<< <hide.o.j55 {at} gmail.com> >>. All rights reserved.
-
-This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic>.
-
-
-=head1 DISCLAIMER OF WARRANTY
-
-BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
-EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
-ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
-YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
-NECESSARY SERVICING, REPAIR, OR CORRECTION.
-
-IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE
-LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
-OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
-THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
-RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
-FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
-SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
+ 
+Hideaki Ohno E<lt>hide.o.j55{at}gmail.comE<gt>
+ 
+=head1 SEE ALSO
+ 
+=head1 LICENSE
+ 
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+ 
+=cut
