@@ -8,8 +8,13 @@ my $builder = Module::Build->new(
     dist_author        => 'Hideaki Ohno<hide.o.j55@gmail.com>',
     license            => 'perl',
     configure_requires => { 'Module::Build' => '0.38' },
-    requires           => {
-        'Test::More' => '0.98',
+    build_requires     => {
+        'Test::More'  => '0.98',
+        'Test::Fatal' => '0.008',
+    },
+    requires => {
+        'parent'   => 0,
+        'Exporter' => 0,
     },
     no_index => { 'directory' => [ 't', 'xt', 'inc', 'eg' ] },
     test_files => ( -d '.git' || $ENV{RELEASE_TESTING} ) ? [qw(t/ xt/)] : ['t/'],
