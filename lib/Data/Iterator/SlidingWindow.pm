@@ -106,24 +106,48 @@ And you can use <> oeprator.
  
 =head1 DESCRIPTION
  
-Data::Iterator::SlidingWindow is
+This module is iterate elements of Sliding Window.
  
 =head1 METHODS
 
 =head2 iterator($window_size, $data_source) 
 
-The arguments of iterator() are: 
+Iterator constructor.
+The arguments are:
 
 =over 2
 
 =item $window_size 
 
+Windows size. 
 
 =item $data_source
+
+Data source of iterator.
+
+CODE reference:
+
+  iterator 3 => sub{
+      CODE
+  };
+  
+CODE returns a value on each call, and if it is exhausted, returns undef.
+If you want yield undefined value as a meaning value.You can use 'NULL object pattern'.
+
+  iterator 3 => sub{
+     my $value = generate_next_value();
+     return { value => $value };
+  };
+
+ARRAY refercen:
+
+  iterator 3 => \@array;
 
 =back
 
 =head2 next()
+
+Get next window.
  
 =head1 AUTHOR
  

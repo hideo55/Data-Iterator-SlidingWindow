@@ -18,7 +18,7 @@ my $builder = Module::Build->new(
     },
     no_index => { 'directory' => [ 't', 'xt', 'inc', 'eg' ] },
     test_files => ( -d '.git' || $ENV{RELEASE_TESTING} ) ? [qw(t/ xt/)] : ['t/'],
-    create_makefile_pl => 'small',
+    create_makefile_pl => 'traditional',
     create_readme      => 1,
     add_to_cleanup     => ['Data-Iterator-SlidingWindow-*'],
     meta_merge         => {
