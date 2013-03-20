@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
         'Test::Fatal' => '0.008',
     },
     requires => {
+        'perl'     => '5.008003',
         'parent'   => 0,
         'Exporter' => 0,
     },
