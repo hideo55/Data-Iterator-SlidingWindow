@@ -1,7 +1,7 @@
 package Data::Iterator::SlidingWindow;
 use strict;
 use warnings;
-use 5.008003;
+use 5.008001;
 use parent 'Exporter';
 use Carp qw(croak);
 use overload
