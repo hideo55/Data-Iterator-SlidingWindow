@@ -70,7 +70,7 @@ The arguments are:
            return { value => $value };
         };
 
-    ARRAY refercen:
+    ARRAY reference:
 
         iterator 3 => \@array;
 
