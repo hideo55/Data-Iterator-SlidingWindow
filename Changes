@@ -1,5 +1,11 @@
 Revision history for Data::Iterator::SlidingWindow
 
+{{$NEXT}}
+
+0.04 2013-06-26T12:21:13Z
+    - Fixed typo in document
+    - Switch to Minilla
+
 0.03    Sat Apr 13 20:10:00 2013
         - Change required perl version
 
