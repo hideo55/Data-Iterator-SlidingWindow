@@ -16,4 +16,4 @@ after_success:
   - cover -report coveralls
 script: perl Build.PL && ./Build && ./Build testcover
 after_success:
-  - cover -report coveralls'
+  - cover -report coveralls
