@@ -97,7 +97,7 @@ Data::Iterator::SlidingWindow - Iteration data with Sliding Window Algorithm
       # $cur is [1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6]
   }
  
-And you can use <> oeprator.
+And you can use <> operator.
  
     while(<$iter>){
         my $cur = $_;
@@ -140,7 +140,7 @@ If you want yield undefined value as a meaning value.You can use 'NULL object pa
      return { value => $value };
   };
 
-ARRAY refercen:
+ARRAY reference:
 
   iterator 3 => \@array;
 
