@@ -137,6 +137,7 @@ If you want yield undefined value as a meaning value.You can use 'NULL object pa
 
   iterator 3 => sub{
      my $value = generate_next_value();
+     return unless is_valid_value($value); # exhausted!
      return { value => $value };
   };
 
