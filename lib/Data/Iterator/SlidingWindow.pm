@@ -8,7 +8,7 @@ use overload
     '<>'     => sub { shift->next() },
     fallback => 1;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 our @EXPORT = qw(iterator);
 

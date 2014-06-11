@@ -1,11 +1,8 @@
 # NAME
- 
 
 Data::Iterator::SlidingWindow - Iteration data with Sliding Window Algorithm
- 
 
 # SYNOPSIS
- 
 
      use Data::Iterator::SlidingWindow;
     
@@ -22,7 +19,6 @@ Data::Iterator::SlidingWindow - Iteration data with Sliding Window Algorithm
     
 
 And you can use <> operator.
- 
 
        while(<$iter>){
            my $cur = $_;
@@ -32,10 +28,8 @@ And you can use <> operator.
     
 
 # DESCRIPTION
- 
 
 This module is iterate elements of Sliding Window.
- 
 
 # METHODS
 
@@ -75,20 +69,14 @@ The arguments are:
 ## next()
 
 Get next window.
- 
 
 # AUTHOR
- 
 
 Hideaki Ohno <hide.o.j55{at}gmail.com>
- 
 
 # SEE ALSO
- 
 
 # LICENSE
- 
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
- 

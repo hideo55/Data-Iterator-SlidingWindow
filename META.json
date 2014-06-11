@@ -4,7 +4,7 @@
       "Hideaki Ohno <hide.o.j55{at}gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v1.0.0, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Minilla/v1.1.0, CPAN::Meta::Converter version 2.141170",
    "license" : [
       "perl_5"
    ],
@@ -68,7 +68,7 @@
          "web" : "https://github.com/hideo55/Data-Iterator-SlidingWindow"
       }
    },
-   "version" : "0.04",
+   "version" : "0.05",
    "x_contributors" : [
       "hideo55 <hide.o.j55@gmail.com>"
    ]
